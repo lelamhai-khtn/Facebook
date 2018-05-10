@@ -73,7 +73,7 @@ public class FacebookScript : MonoBehaviour
 
 
 
-    void DisplayPhoto(FBResult result)
+    void DisplayPhoto(IGraphResult result)
     {
         if (result.Error != null)
         {
