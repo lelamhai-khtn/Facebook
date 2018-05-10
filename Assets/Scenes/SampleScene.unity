@@ -401,6 +401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FriendsText: {fileID: 1942458509}
+  Avatar: {fileID: 1106893264}
 --- !u!4 &659583728
 Transform:
   m_ObjectHideFlags: 0

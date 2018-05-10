@@ -7,6 +7,7 @@ public class FacebookScript : MonoBehaviour
 {
 
     public Text FriendsText;
+    public Image Avatar;
     private Dictionary<string, string> profile = null;
 
     private void Awake()
@@ -35,7 +36,7 @@ public class FacebookScript : MonoBehaviour
     #region Login / Logout
     public void FacebookLogin()
     {
-        var permissions = new List<string>() { "public_profile", "email", "user_friends" };
+        var permissions = new List<string>() { "public_profile", "email", "user_friends", "publish_actions" , "user_friends" };
         FB.LogInWithReadPermissions(permissions, AuthCallback);
     }
     
@@ -44,6 +45,8 @@ public class FacebookScript : MonoBehaviour
         if (FB.IsLoggedIn)
         {
             FB.API("/me?fields=id,name", HttpMethod.GET, DealWithUserName);
+            FB.API("/me/picture?type=square&height=128&width=128", HttpMethod.GET, DisplayPhoto);
+            FB.API("/app/scores?fields=score,user.limit(30)", HttpMethod.GET, ScoresCallback);
         }
         else
         {
@@ -61,28 +64,53 @@ public class FacebookScript : MonoBehaviour
             return;
         }
 
-        Debug.Log("\""+result.RawResult+"\"");
         string jsonData = result.RawResult;
         MyClass myObject = new MyClass();
         myObject = JsonUtility.FromJson<MyClass>(jsonData);
-        Debug.Log(myObject.name);
-
-        //profile = Util.DeserializeJSONProfile(result.Text);
-
         Text UserMsg = FriendsText.GetComponent<Text>();
-
         UserMsg.text = "Hello, " + myObject.name;
     }
 
-  
+
+
+    void DisplayPhoto(FBResult result)
+    {
+        if (result.Error != null)
+        {
+            Debug.Log("Error: " + result);
+
+            FB.API("/me/picture?type=square&height=128&width=128", HttpMethod.GET, DisplayPhoto);
+            return;
+        }
+        Avatar.sprite = Sprite.Create(result.Texture, new Rect(0, 0, 128, 128), new Vector2());
+    }
+
+
 
     public void FacebookLogout()
     {
         FB.LogOut();
     }
-
-
     #endregion
+
+
+
+
+    private void ScoresCallback(IGraphResult result)
+    {
+        if (result.Error != null)
+        {
+            Debug.Log("Error: " + result);
+            FB.API("/app/scores?fields=score,user.limit(30)", HttpMethod.GET, ScoresCallback);
+            return;
+        }
+        Debug.Log(result);
+    }
+
+
+
+
+
 
     public void FacebookShare()
     {
