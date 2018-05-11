@@ -106,6 +106,11 @@ public class FacebookScript : MonoBehaviour
         }
         Debug.Log(result);
     }
+
+
+
+
+
     public void FacebookShare()
     {
         FB.ShareLink(new System.Uri("http://resocoder.com"), "Check it out!",
